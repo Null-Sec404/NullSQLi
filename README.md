@@ -1,2 +1,2 @@
-# NullSQLi
-SQL Injection Powered by SQLMap
+# How to setup my script
+- create output/sqli in my script folder
